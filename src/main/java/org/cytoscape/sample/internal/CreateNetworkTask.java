@@ -24,7 +24,7 @@ public class CreateNetworkTask extends AbstractTask {
 		// Create an empty network
 		CyNetwork myNet = cnf.createNetwork();
 		myNet.getRow(myNet).set(CyNetwork.NAME,
-				      namingUtil.getSuggestedNetworkTitle("My great Network"));
+				      namingUtil.getSuggestedNetworkTitle("My not so great Network"));
 		
 		// Add two nodes to the network
 		CyNode node1 = myNet.addNode();
