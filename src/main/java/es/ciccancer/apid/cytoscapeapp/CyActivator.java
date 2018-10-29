@@ -42,7 +42,6 @@ public class CyActivator extends AbstractCyActivator {
         serviceProperties.put(PREFERRED_MENU, "Apps.APID");
         serviceProperties.put(IN_MENU_BAR, "true");
         serviceProperties.put(MENU_GRAVITY, "1.0");
-        //MainAPIDPanel mainPanel = new MainAPIDPanel();
         SearchAction searchPanel = new SearchAction(serviceProperties, cySwingApplicationRef, cyApplicationManagerRef, cyNetworkViewManagerRef, registrar, cyNetworkFactoryServiceRef, netMgr, cnvf, networkViewManager);
 
         serviceProperties = new HashMap<String, String>();
@@ -51,20 +50,9 @@ public class CyActivator extends AbstractCyActivator {
         serviceProperties.put(MENU_GRAVITY, "2.0");
         AboutAction aboutPanel = new AboutAction(serviceProperties, cySwingApplicationRef, cyApplicationManagerRef, cyNetworkViewManagerRef);
 
-        //registerService(bc, mainPanel,CytoPanelComponent.class, new Properties());
         registerService(bc, searchPanel, CyAction.class, new Properties());
         registerService(bc, aboutPanel, CyAction.class, new Properties());
 
-        /*serviceProperties = new HashMap<String, String>();
-        serviceProperties.put("inMenuBar", "true");
-        serviceProperties.put("preferredMenu", "Apps.GeneMANIA");
-        serviceProperties.put(MENU_GRAVITY, "2.0");
-        DownloadDataSetAction downloadDataSetAction = new DownloadDataSetAction(
-                serviceProperties, cyApplicationManagerRef, geneMania, cyNetworkViewManagerRef);*/
-        // MainAPIDPanel mainPanel = new MainAPIDPanel();
-        // MainPanelAction controlPanelAction = new MainPanelAction(cySwingApplicationRef, mainPanel);
-        // registerService(bc, mainPanel, CytoPanelComponent.class, new Properties());
-        // registerService(bc, controlPanelAction, CyAction.class, new Properties());
     }
 
 }
