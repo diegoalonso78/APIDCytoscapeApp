@@ -5,11 +5,8 @@
  */
 package es.ciccancer.apid.cytoscapeapp.gui;
 
+import es.ciccancer.apid.cytoscapeapp.CyActivator;
 import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -20,19 +17,22 @@ import javax.swing.event.HyperlinkListener;
  */
 public class AboutDialog extends java.awt.Dialog {
 
-    private static String text = "<html>"
-            + "<body>"
-            + "    <h1>APID v0.1</h1>"
-            + "    <a href=\"http://apid.dep.usal.es\">APID Web</a>"
-            + "</body>"
-            + "</html>";
-
     /**
      * Creates new form AboutDialog
      */
     public AboutDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        
+        String text = "<html>"
+            + "<body>"
+            + "    <h1>APID v0.1</h1>"
+            + "    <br/>"
+            + "    <img src=\""+CyActivator.class.getResource("logo.jpg").toString()+"\"/>"
+            + "    <br/>"
+            + "    <a href=\"http://apid.dep.usal.es\">APID Web</a>"
+            + "</body>"
+            + "</html>";
         textAbout.setText(text);
         textAbout.setEditable(false);
         textAbout.addHyperlinkListener(new HyperlinkListener() {
@@ -44,8 +44,7 @@ public class AboutDialog extends java.awt.Dialog {
                             Desktop.getDesktop().browse(e.getURL().toURI());
                         } catch (Exception ex) {
                             // No browser showed
-                            JOptionPane.showMessageDialog(null,
-    "Error link: "+e.getDescription());
+                            JOptionPane.showMessageDialog(null,"Error link: "+e.getDescription());
                         }
                     }
                 }
@@ -63,34 +62,40 @@ public class AboutDialog extends java.awt.Dialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        closeButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         textAbout = new javax.swing.JEditorPane();
+        southPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        closeButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
 
+        setPreferredSize(new java.awt.Dimension(450, 250));
         setResizable(false);
-        setSize(new java.awt.Dimension(300, 300));
+        setSize(new java.awt.Dimension(600, 600));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
             }
         });
 
+        textAbout.setContentType("text/html"); // NOI18N
+        jScrollPane1.setViewportView(textAbout);
+
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        southPanel.setLayout(new java.awt.GridLayout(1, 3));
+        southPanel.add(jPanel1);
+
         closeButton.setText("close");
-        closeButton.setMaximumSize(new java.awt.Dimension(20, 29));
-        closeButton.setMinimumSize(new java.awt.Dimension(20, 29));
-        closeButton.setName(""); // NOI18N
-        closeButton.setSize(new java.awt.Dimension(20, 0));
         closeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 closeButtonActionPerformed(evt);
             }
         });
-        add(closeButton, java.awt.BorderLayout.SOUTH);
+        southPanel.add(closeButton);
+        southPanel.add(jPanel2);
 
-        textAbout.setContentType("text/html"); // NOI18N
-        jScrollPane1.setViewportView(textAbout);
-
-        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        add(southPanel, java.awt.BorderLayout.SOUTH);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -104,13 +109,17 @@ public class AboutDialog extends java.awt.Dialog {
     }//GEN-LAST:event_closeDialog
 
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+        setVisible(false);
         dispose();
     }//GEN-LAST:event_closeButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeButton;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel southPanel;
     private javax.swing.JEditorPane textAbout;
     // End of variables declaration//GEN-END:variables
 }
