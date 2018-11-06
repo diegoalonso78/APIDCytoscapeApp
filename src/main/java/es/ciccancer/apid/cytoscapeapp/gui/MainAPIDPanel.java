@@ -12,6 +12,8 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
@@ -24,9 +26,10 @@ public class MainAPIDPanel extends javax.swing.JPanel implements CytoPanelCompon
     /**
      * Creates new form Panel
      */
-    public MainAPIDPanel(CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager netMgr, CyNetworkViewFactory cnvf, CyNetworkViewManager networkViewManager) {
+    public MainAPIDPanel(CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager netMgr, CyNetworkViewFactory cnvf, 
+            CyNetworkViewManager networkViewManager, CyLayoutAlgorithmManager layoutManager, CyServiceRegistrar registrar) {
         initComponents();
-        SearchPanel sp = new SearchPanel(cyNetworkFactoryServiceRef, netMgr, cnvf, networkViewManager);
+        SearchPanel sp = new SearchPanel(cyNetworkFactoryServiceRef, netMgr, cnvf, networkViewManager, layoutManager, registrar);
         this.add(sp,BorderLayout.NORTH);
     }
 

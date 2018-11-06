@@ -13,6 +13,7 @@ import org.cytoscape.model.CyNetworkManager;
 import org.osgi.framework.BundleContext;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import static org.cytoscape.work.ServiceProperties.IN_MENU_BAR;
@@ -36,13 +37,14 @@ public class CyActivator extends AbstractCyActivator {
         CyNetworkManager netMgr = getService(bc,CyNetworkManager.class);
         CyNetworkViewFactory cnvf = getService(bc, CyNetworkViewFactory.class);
         CyNetworkViewManager networkViewManager = getService(bc, CyNetworkViewManager.class);
+        CyLayoutAlgorithmManager layoutManager = getService(bc, CyLayoutAlgorithmManager.class);
 
         Map<String, String> serviceProperties;
         serviceProperties = new HashMap<String, String>();
         serviceProperties.put(PREFERRED_MENU, "Apps.APID");
         serviceProperties.put(IN_MENU_BAR, "true");
         serviceProperties.put(MENU_GRAVITY, "1.0");
-        SearchAction searchPanel = new SearchAction(serviceProperties, cySwingApplicationRef, cyApplicationManagerRef, cyNetworkViewManagerRef, registrar, cyNetworkFactoryServiceRef, netMgr, cnvf, networkViewManager);
+        SearchAction searchPanel = new SearchAction(serviceProperties, cySwingApplicationRef, cyApplicationManagerRef, cyNetworkViewManagerRef, registrar, cyNetworkFactoryServiceRef, netMgr, cnvf, networkViewManager, layoutManager);
 
         serviceProperties = new HashMap<String, String>();
         serviceProperties.put(PREFERRED_MENU, "Apps.APID");

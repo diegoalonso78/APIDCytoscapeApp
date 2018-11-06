@@ -18,11 +18,16 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.view.layout.CyLayoutAlgorithm;
+import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.work.SynchronousTaskManager;
+import org.cytoscape.work.TaskIterator;
 
 /**
  *
@@ -34,6 +39,8 @@ class SearchPanel extends javax.swing.JPanel {
     private final CyNetworkManager netMgr;
     private final CyNetworkViewManager networkViewManager;
     private final CyNetworkViewFactory cnvf;
+    private final CyLayoutAlgorithmManager layoutManager;
+    private final CyServiceRegistrar registrar;
     
     private final Map<String, CyNode> idCyNodeList = new HashMap<String, CyNode>();
     private final Map<Long, APIDNodeData> suidAPIDNodeDataList = new HashMap<Long, APIDNodeData>();
@@ -42,12 +49,15 @@ class SearchPanel extends javax.swing.JPanel {
     /**
      * Creates new form SearchPanel
      */
-    public SearchPanel(CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager netMgr, CyNetworkViewFactory cnvf, CyNetworkViewManager networkViewManager) {
+    public SearchPanel(CyNetworkFactory cyNetworkFactoryServiceRef, CyNetworkManager netMgr, CyNetworkViewFactory cnvf, 
+            CyNetworkViewManager networkViewManager, CyLayoutAlgorithmManager layoutManager, CyServiceRegistrar registrar) {
         initComponents();
         this.cyNetworkFactoryServiceRef = cyNetworkFactoryServiceRef;
         this.netMgr = netMgr;
         this.networkViewManager = networkViewManager;
         this.cnvf = cnvf;
+        this.layoutManager = layoutManager;
+        this.registrar = registrar;
     }
     
     private CyNetwork createNet(APIDNetworkData data) {
@@ -107,6 +117,10 @@ class SearchPanel extends javax.swing.JPanel {
         for (View<CyEdge> view : nv.getEdgeViews()) {
             view.setLockedValue(BasicVisualLexicon.EDGE_WIDTH, suidAPIDEdgeDataList.get(view.getModel().getSUID()).getCurationevents().doubleValue()/10);
         }        
+        CyLayoutAlgorithm layout = layoutManager.getDefaultLayout();
+        TaskIterator itr = layout.createTaskIterator(nv, layout.getDefaultLayoutContext(), CyLayoutAlgorithm.ALL_NODE_VIEWS,"");
+        SynchronousTaskManager<?> synTaskMan = registrar.getService(SynchronousTaskManager.class);
+        synTaskMan.execute(itr); 
         nv.updateView();
         return nv;
     }

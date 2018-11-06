@@ -120,6 +120,12 @@
             <version>1.1.1</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.cytoscape</groupId>
+            <artifactId>layout-api</artifactId>
+            <version>3.1.0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 
 </project>

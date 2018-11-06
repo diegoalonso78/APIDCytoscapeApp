@@ -15,6 +15,7 @@ import org.cytoscape.application.swing.CytoPanelState;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.service.util.CyServiceRegistrar;
+import org.cytoscape.view.layout.CyLayoutAlgorithmManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 
@@ -33,13 +34,14 @@ public class SearchAction extends AbstractCyAction {
             CyNetworkFactory cyNetworkFactoryServiceRef,
             CyNetworkManager netMgr,
             CyNetworkViewFactory cnvf,
-            CyNetworkViewManager networkViewManager) {
+            CyNetworkViewManager networkViewManager,
+            CyLayoutAlgorithmManager layoutManager) {
 
         super(properties, applicationManager, viewManager);
         putValue(NAME, "Search");
         this.application = application;
         this.registrar = registrar;
-        this.mainPanel = new MainAPIDPanel(cyNetworkFactoryServiceRef, netMgr, cnvf, networkViewManager);        
+        this.mainPanel = new MainAPIDPanel(cyNetworkFactoryServiceRef, netMgr, cnvf, networkViewManager, layoutManager, registrar);    
     }
 
     @Override
