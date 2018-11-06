@@ -21,17 +21,23 @@ import org.cytoscape.model.CyNode;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
+import org.cytoscape.view.model.View;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
 
 /**
  *
  * @author miguelangelgutierrezgarcia
  */
 class SearchPanel extends javax.swing.JPanel {
-
+    
     private final CyNetworkFactory cyNetworkFactoryServiceRef;
     private final CyNetworkManager netMgr;
     private final CyNetworkViewManager networkViewManager;
     private final CyNetworkViewFactory cnvf;
+    
+    private final Map<String, CyNode> idCyNodeList = new HashMap<String, CyNode>();
+    private final Map<Long, APIDNodeData> suidAPIDNodeDataList = new HashMap<Long, APIDNodeData>();
+    private final Map<Long, APIDEdgeData> suidAPIDEdgeDataList = new HashMap<Long, APIDEdgeData>();
 
     /**
      * Creates new form SearchPanel
@@ -43,20 +49,17 @@ class SearchPanel extends javax.swing.JPanel {
         this.networkViewManager = networkViewManager;
         this.cnvf = cnvf;
     }
-
+    
     private CyNetwork createNet(APIDNetworkData data) {
         CyNetwork myNet = cyNetworkFactoryServiceRef.createNetwork();
-        myNet.getRow(myNet).set(CyNetwork.NAME, "My great new Network");
-
-        // Map id <-> cynode
-        Map<String, CyNode> idCyNodeList = new HashMap<String, CyNode>();
-
+        myNet.getRow(myNet).set(CyNetwork.NAME, searchName.getText());
+        
         myNet.getDefaultNodeTable().createColumn("id", String.class, true);
         myNet.getDefaultNodeTable().createColumn("uniprotname", String.class, true);
         myNet.getDefaultNodeTable().createColumn("description", String.class, true);
         myNet.getDefaultNodeTable().createColumn("ints", Long.class, true);
         myNet.getDefaultNodeTable().createColumn("border", String.class, true);
-
+        
         Iterator<APIDNodeData> itNode = data.nodeIterator();
         while (itNode.hasNext()) {
             CyNode node = myNet.addNode();
@@ -68,8 +71,9 @@ class SearchPanel extends javax.swing.JPanel {
             myNet.getDefaultNodeTable().getRow(node.getSUID()).set("ints", nodeData.getInts());
             myNet.getDefaultNodeTable().getRow(node.getSUID()).set("border", nodeData.getBorder());
             idCyNodeList.put(nodeData.getId(), node);
+            suidAPIDNodeDataList.put(node.getSUID(), nodeData);
         }
-
+        
         myNet.getDefaultEdgeTable().createColumn("source", String.class, true);
         myNet.getDefaultEdgeTable().createColumn("target", String.class, true);
         myNet.getDefaultEdgeTable().createColumn("experiments", Long.class, true);
@@ -77,7 +81,7 @@ class SearchPanel extends javax.swing.JPanel {
         myNet.getDefaultEdgeTable().createColumn("pdb", Long.class, true);
         myNet.getDefaultEdgeTable().createColumn("papers", Long.class, true);
         myNet.getDefaultEdgeTable().createColumn("curationevents", Long.class, true);
-
+        
         Iterator<APIDEdgeData> itEdge = data.edgeIterator();
         while (itEdge.hasNext()) {
             APIDEdgeData edgeData = itEdge.next();
@@ -89,10 +93,22 @@ class SearchPanel extends javax.swing.JPanel {
             myNet.getDefaultEdgeTable().getRow(edge.getSUID()).set("pdb", edgeData.getPdb());
             myNet.getDefaultEdgeTable().getRow(edge.getSUID()).set("papers", edgeData.getPapers());
             myNet.getDefaultEdgeTable().getRow(edge.getSUID()).set("curationevents", edgeData.getCurationevents());
-
+            suidAPIDEdgeDataList.put(edge.getSUID(), edgeData);
         }
-
+        
         return myNet;
+    }
+    
+    private CyNetworkView formatNet(CyNetwork net) {
+        CyNetworkView nv = cnvf.createNetworkView(net);
+        for (View<CyNode> view : nv.getNodeViews()) {
+            view.setLockedValue(BasicVisualLexicon.NODE_LABEL, suidAPIDNodeDataList.get(view.getModel().getSUID()).getName());
+        }
+        for (View<CyEdge> view : nv.getEdgeViews()) {
+            view.setLockedValue(BasicVisualLexicon.EDGE_WIDTH, suidAPIDEdgeDataList.get(view.getModel().getSUID()).getCurationevents().doubleValue()/10);
+        }        
+        nv.updateView();
+        return nv;
     }
 
     /**
@@ -104,16 +120,16 @@ class SearchPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        searchLabel = new javax.swing.JLabel();
+        searchName = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
         setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10), javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createTitledBorder("Protein search"), javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5))));
         setLayout(new java.awt.BorderLayout());
 
-        jLabel1.setText("Protein");
-        add(jLabel1, java.awt.BorderLayout.LINE_START);
-        add(jTextField1, java.awt.BorderLayout.CENTER);
+        searchLabel.setText("Protein");
+        add(searchLabel, java.awt.BorderLayout.LINE_START);
+        add(searchName, java.awt.BorderLayout.CENTER);
 
         jButton1.setText("Search");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -125,13 +141,13 @@ class SearchPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
+        
         try {
-            APIDNetworkData networkData = APIDQuery.getInteractions(jTextField1.getText());
+            APIDNetworkData networkData = APIDQuery.getInteractions(searchName.getText());
             CyNetwork net = createNet(networkData);
             netMgr.addNetwork(net);
-            CyNetworkView nv = cnvf.createNetworkView(net);
-            networkViewManager.addNetworkView(nv);
+            CyNetworkView nv = formatNet(net);
+            networkViewManager.addNetworkView(nv);  
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -141,7 +157,7 @@ class SearchPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JLabel searchLabel;
+    private javax.swing.JTextField searchName;
     // End of variables declaration//GEN-END:variables
 }
